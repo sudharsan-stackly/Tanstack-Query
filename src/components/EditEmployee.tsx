@@ -1,44 +1,49 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
 
-import { addEmployee } from "../api/employeeApi";
+import { updateEmployee } from "../api/employeeApi";
 import type { Employee } from "../types/employee";
 
-function AddEmployee() {
+interface EditEmployeeProps {
+  employee: Employee;
+  onClose: () => void;
+}
+
+function EditEmployee({
+  employee,
+  onClose,
+}: EditEmployeeProps) {
   const queryClient = useQueryClient();
 
-  const [form, setForm] = useState<Employee>({
-    employeeId: "",
-    name: "",
-    email: "",
-    department: "",
-    designation: "",
-    status: "Active",
-  });
+  const [form, setForm] = useState<Employee>(employee);
+
+  useEffect(() => {
+    setForm(employee);
+  }, [employee]);
 
   const mutation = useMutation({
-    mutationFn: addEmployee,
+    mutationFn: updateEmployee,
 
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["employees"],
       });
 
-      setForm({
-        employeeId: "",
-        name: "",
-        email: "",
-        department: "",
-        designation: "",
-        status: "Active",
+      queryClient.invalidateQueries({
+        queryKey: ["employee", employee.employeeId],
       });
+
+      onClose();
     },
 
     onError: (error) => {
-      console.error("Failed to add employee:", error);
+      console.error(
+        "Failed to update employee:",
+        error
+      );
     },
   });
 
@@ -62,21 +67,18 @@ function AddEmployee() {
   };
 
   return (
-    <div className="form-container">
-      <h2>Add Employee</h2>
+    <div className="edit-container">
+      <h2>Edit Employee</h2>
 
       <form onSubmit={handleSubmit}>
         <input
           name="employeeId"
-          placeholder="Employee ID"
           value={form.employeeId}
-          onChange={handleChange}
-          required
+          disabled
         />
 
         <input
           name="name"
-          placeholder="Name"
           value={form.name}
           onChange={handleChange}
           required
@@ -85,7 +87,6 @@ function AddEmployee() {
         <input
           name="email"
           type="email"
-          placeholder="Email"
           value={form.email}
           onChange={handleChange}
           required
@@ -93,7 +94,6 @@ function AddEmployee() {
 
         <input
           name="department"
-          placeholder="Department"
           value={form.department}
           onChange={handleChange}
           required
@@ -101,7 +101,6 @@ function AddEmployee() {
 
         <input
           name="designation"
-          placeholder="Designation"
           value={form.designation}
           onChange={handleChange}
           required
@@ -112,8 +111,13 @@ function AddEmployee() {
           value={form.status}
           onChange={handleChange}
         >
-          <option value="Active">Active</option>
-          <option value="Inactive">Inactive</option>
+          <option value="Active">
+            Active
+          </option>
+
+          <option value="Inactive">
+            Inactive
+          </option>
         </select>
 
         <button
@@ -121,16 +125,17 @@ function AddEmployee() {
           disabled={mutation.isPending}
         >
           {mutation.isPending
-            ? "Adding..."
-            : "Add Employee"}
+            ? "Updating..."
+            : "Update Employee"}
+        </button>
+
+        <button
+          type="button"
+          onClick={onClose}
+        >
+          Cancel
         </button>
       </form>
-
-      {mutation.isSuccess && (
-        <p className="success">
-          Employee added successfully.
-        </p>
-      )}
 
       {mutation.isError && (
         <p className="error">
@@ -141,4 +146,4 @@ function AddEmployee() {
   );
 }
 
-export default AddEmployee;
+export default EditEmployee;

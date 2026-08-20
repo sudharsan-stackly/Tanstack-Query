@@ -107,6 +107,14 @@ export const addEmployee = async (
 ): Promise<Employee> => {
   await delay(500);
 
+  const employeeExists = employees.some(
+    (item) => item.employeeId === employee.employeeId
+  );
+
+  if (employeeExists) {
+    throw new Error("Employee ID already exists");
+  }
+
   employees = [...employees, employee];
 
   return employee;
@@ -117,8 +125,18 @@ export const updateEmployee = async (
 ): Promise<Employee> => {
   await delay(500);
 
+  const employeeExists = employees.some(
+    (item) => item.employeeId === employee.employeeId
+  );
+
+  if (!employeeExists) {
+    throw new Error("Employee not found");
+  }
+
   employees = employees.map((item) =>
-    item.employeeId === employee.employeeId ? employee : item
+    item.employeeId === employee.employeeId
+      ? employee
+      : item
   );
 
   return employee;
@@ -128,6 +146,14 @@ export const deleteEmployee = async (
   employeeId: string
 ): Promise<string> => {
   await delay(500);
+
+  const employeeExists = employees.some(
+    (employee) => employee.employeeId === employeeId
+  );
+
+  if (!employeeExists) {
+    throw new Error("Employee not found");
+  }
 
   employees = employees.filter(
     (employee) => employee.employeeId !== employeeId

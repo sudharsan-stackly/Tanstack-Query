@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { getEmployeeById } from "../api/employeeApi";
 
-interface Props {
+interface EmployeeDetailsProps {
   employeeId: string;
   onClose: () => void;
 }
@@ -9,36 +9,85 @@ interface Props {
 function EmployeeDetails({
   employeeId,
   onClose,
-}: Props) {
+}: EmployeeDetailsProps) {
   const {
     data: employee,
     isLoading,
     isError,
+    error,
   } = useQuery({
     queryKey: ["employee", employeeId],
     queryFn: () => getEmployeeById(employeeId),
     enabled: !!employeeId,
+    retry: 2,
   });
 
   if (isLoading) {
-    return <p>Loading employee details...</p>;
+    return (
+      <div className="details">
+        <p>Loading employee details...</p>
+      </div>
+    );
   }
 
-  if (isError || !employee) {
-    return <p>Employee not found.</p>;
+  if (isError) {
+    return (
+      <div className="details">
+        <p className="error">
+          {error.message}
+        </p>
+
+        <button onClick={onClose}>
+          Close
+        </button>
+      </div>
+    );
+  }
+
+  if (!employee) {
+    return (
+      <div className="details">
+        <p>Employee not found.</p>
+
+        <button onClick={onClose}>
+          Close
+        </button>
+      </div>
+    );
   }
 
   return (
     <div className="details">
-      <button onClick={onClose}>Close</button>
+      <button onClick={onClose}>
+        Close
+      </button>
 
       <h2>{employee.name}</h2>
 
-      <p>Employee ID: {employee.employeeId}</p>
-      <p>Email: {employee.email}</p>
-      <p>Department: {employee.department}</p>
-      <p>Designation: {employee.designation}</p>
-      <p>Status: {employee.status}</p>
+      <p>
+        <strong>Employee ID:</strong>{" "}
+        {employee.employeeId}
+      </p>
+
+      <p>
+        <strong>Email:</strong>{" "}
+        {employee.email}
+      </p>
+
+      <p>
+        <strong>Department:</strong>{" "}
+        {employee.department}
+      </p>
+
+      <p>
+        <strong>Designation:</strong>{" "}
+        {employee.designation}
+      </p>
+
+      <p>
+        <strong>Status:</strong>{" "}
+        {employee.status}
+      </p>
     </div>
   );
 }

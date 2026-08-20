@@ -6,6 +6,13 @@ body {
   margin: 0;
   font-family: Arial, sans-serif;
   background: #f4f6f8;
+  color: #222;
+}
+
+button,
+input,
+select {
+  font: inherit;
 }
 
 .container {
@@ -19,11 +26,20 @@ h1 {
   margin-bottom: 30px;
 }
 
-.form-container {
+/* Add Employee */
+
+.form-container,
+.edit-container,
+.details {
   background: white;
   padding: 25px;
   border-radius: 10px;
   margin-bottom: 30px;
+}
+
+.form-container h2,
+.edit-container h2 {
+  margin-top: 0;
 }
 
 form {
@@ -34,10 +50,11 @@ form {
 
 input,
 select {
+  width: 100%;
   padding: 12px;
   border: 1px solid #ccc;
   border-radius: 6px;
-  font-size: 15px;
+  background: white;
 }
 
 button {
@@ -49,25 +66,44 @@ button {
   color: white;
 }
 
+button:hover {
+  opacity: 0.9;
+}
+
 button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+/* Employee List */
+
+.employee-section {
+  margin-top: 30px;
 }
 
 .list-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 20px;
 }
 
 .filters {
   display: flex;
   gap: 15px;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 .filters input {
   flex: 1;
+}
+
+.filters select {
+  width: 200px;
+}
+
+.employee-count {
+  margin-bottom: 20px;
 }
 
 .employee-grid {
@@ -82,39 +118,84 @@ button:disabled {
   border-radius: 10px;
 }
 
+.employee-card h3 {
+  margin-top: 0;
+}
+
 .employee-card p {
   margin: 8px 0;
 }
 
-.employee-card button {
-  margin-top: 10px;
+.card-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  flex-wrap: wrap;
 }
 
+/* Employee Details */
+
 .details {
-  background: white;
-  padding: 25px;
-  margin-top: 25px;
-  border-radius: 10px;
+  margin-top: 30px;
 }
+
+/* Messages */
 
 .success {
   margin-top: 15px;
+  color: green;
 }
 
 .error {
   margin-top: 15px;
+  color: red;
+}
+
+/* Global Fetching */
+
+.global-loading {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  padding: 10px 15px;
+  border-radius: 6px;
+  background: #222;
+  color: white;
+  z-index: 1000;
+}
+
+/* Responsive */
+
+@media (max-width: 900px) {
+  .employee-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (max-width: 768px) {
+  .container {
+    margin: 20px auto;
+  }
+
   form {
     grid-template-columns: 1fr;
+  }
+
+  .filters {
+    flex-direction: column;
+  }
+
+  .filters select {
+    width: 100%;
   }
 
   .employee-grid {
     grid-template-columns: 1fr;
   }
 
-  .filters {
+  .list-header {
+    align-items: flex-start;
     flex-direction: column;
+    gap: 15px;
   }
 }
